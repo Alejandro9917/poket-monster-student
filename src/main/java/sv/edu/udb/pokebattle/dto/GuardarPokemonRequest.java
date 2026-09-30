@@ -1,0 +1,1 @@
+package sv.edu.udb.pokebattle.dto; import jakarta.validation.constraints.*; import java.util.List; public record GuardarPokemonRequest(@NotNull @Positive Integer pokemonApiId,@NotEmpty @Size(max=4) List<@Positive Integer> movimientosApiId) { }

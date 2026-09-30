@@ -1,0 +1,22 @@
+Licencia de Uso Académico — PokéBattle API
+
+Copyright (c) 2026
+
+Este proyecto se distribuye únicamente con fines académicos y demostrativos.
+Su propósito es ilustrar conceptos de Programación Orientada a Objetos (POO),
+desarrollo de APIs REST con Spring Boot, persistencia de datos mediante JPA y
+el consumo de servicios HTTP externos.
+
+Se permite copiar, ejecutar, modificar y compartir este material para estudio,
+clases, tareas, prácticas y evaluaciones académicas, siempre que se conserve
+este aviso de licencia y la atribución al proyecto original.
+
+No se autoriza el uso comercial, la venta, la redistribución como producto
+comercial ni la presentación del código como obra propia sin atribución.
+
+El software se proporciona "tal cual", sin garantía expresa o implícita. Las
+personas autoras no asumen responsabilidad por daños, pérdidas o consecuencias
+derivadas de su uso.
+
+Pokémon y los nombres relacionados son marcas de sus respectivos titulares.
+Este proyecto no está afiliado, patrocinado ni aprobado por dichos titulares.

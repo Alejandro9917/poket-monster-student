@@ -1,0 +1,3 @@
+package sv.edu.udb.pokebattle.controller;
+import jakarta.validation.Valid; import lombok.*; import org.springframework.http.HttpStatus; import org.springframework.web.bind.annotation.*; import sv.edu.udb.pokebattle.dto.*; import sv.edu.udb.pokebattle.service.JugadorService; import java.util.*;
+@RestController @RequestMapping("/api/jugadores") @RequiredArgsConstructor public class JugadorController { private final JugadorService service; @PostMapping @ResponseStatus(HttpStatus.CREATED) public JugadorResponse crear(@Valid @RequestBody CrearJugadorRequest dto){return service.crear(dto);} @GetMapping public List<JugadorResponse> listar(){return service.listar();} @GetMapping("/{id}") public JugadorResponse obtener(@PathVariable UUID id){return service.obtener(id);} }
