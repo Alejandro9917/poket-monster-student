@@ -25,6 +25,10 @@ public class PartidaController {
                                   @Valid @RequestBody UnirsePartidaRequest dto) {
         return service.unirse(partidaId, dto);
     }
+    @PostMapping("/{partidaId}/jugadores/{jugadorId}/confirmar")
+    public PartidaResponse confirmar(@PathVariable UUID partidaId, @PathVariable UUID jugadorId) { return service.confirmar(partidaId,jugadorId); }
+    @PostMapping("/{partidaId}/iniciar")
+    public PartidaResponse iniciar(@PathVariable UUID partidaId) { return service.iniciar(partidaId); }
 
     @GetMapping("/{partidaId}")
     public PartidaResponse obtener(@PathVariable UUID partidaId) { return service.obtener(partidaId); }

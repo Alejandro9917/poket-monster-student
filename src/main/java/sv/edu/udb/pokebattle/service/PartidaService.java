@@ -1,6 +1,8 @@
 package sv.edu.udb.pokebattle.service;
 
 import java.util.List;
+import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,10 +19,13 @@ import sv.edu.udb.pokebattle.model.EstadoPartida;
 import sv.edu.udb.pokebattle.model.Jugador;
 import sv.edu.udb.pokebattle.model.ParticipantePartida;
 import sv.edu.udb.pokebattle.model.Partida;
+import sv.edu.udb.pokebattle.model.PokemonBatalla;
+import sv.edu.udb.pokebattle.model.PokemonEquipo;
 import sv.edu.udb.pokebattle.repository.EquipoRepository;
 import sv.edu.udb.pokebattle.repository.JugadorRepository;
 import sv.edu.udb.pokebattle.repository.ParticipantePartidaRepository;
 import sv.edu.udb.pokebattle.repository.PartidaRepository;
+import sv.edu.udb.pokebattle.repository.PokemonBatallaRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +35,7 @@ public class PartidaService {
     private final ParticipantePartidaRepository participanteRepository;
     private final JugadorRepository jugadorRepository;
     private final EquipoRepository equipoRepository;
+    private final PokemonBatallaRepository pokemonBatallaRepository;
 
     public PartidaResponse crear(CrearPartidaRequest dto) {
         Jugador jugador = buscarJugador(dto.jugadorId());
@@ -61,6 +67,24 @@ public class PartidaService {
 
     @Transactional(readOnly = true)
     public PartidaResponse obtener(UUID partidaId) { return respuesta(buscarPartida(partidaId)); }
+
+    public PartidaResponse confirmar(UUID partidaId, UUID jugadorId) {
+        Partida partida=buscarPartida(partidaId);
+        if(partida.getEstado()!=EstadoPartida.ESPERANDO_CONFIRMACION) throw new ConflictoException("La partida no se encuentra esperando confirmaciones");
+        ParticipantePartida p=participanteRepository.findByPartidaIdAndJugadorId(partidaId,jugadorId).orElseThrow(()->new RecursoNoEncontradoException("Participante no encontrado"));
+        p.setConfirmado(true); participanteRepository.save(p); return respuesta(partida);
+    }
+    public PartidaResponse iniciar(UUID partidaId) {
+        Partida partida=buscarPartida(partidaId);
+        if(partida.getEstado()!=EstadoPartida.ESPERANDO_CONFIRMACION) throw new ConflictoException("La partida no puede iniciar en su estado actual");
+        List<ParticipantePartida> ps=participanteRepository.findByPartidaId(partidaId);
+        if(ps.size()!=2 || ps.stream().anyMatch(p->!p.isConfirmado())) throw new ConflictoException("Ambos jugadores deben confirmar");
+        ps.forEach(p->{ if(p.getEquipo().getPokemon().size()!=3) throw new ReglaNegocioException("El equipo debe contener exactamente tres Pokémon"); p.getEquipo().getPokemon().forEach((pk)->crearEstado(p,pk)); });
+        Jugador primero=ps.stream().max(Comparator.comparingInt(p->p.getEquipo().getPokemon().stream().mapToInt(PokemonEquipo::getVelocidadBase).max().orElse(0))).orElseThrow().getJugador();
+        partida.setNumeroTurno(1); partida.setTurnoDe(primero); partida.setEstado(EstadoPartida.EN_CURSO); partida.setIniciadaEn(LocalDateTime.now());
+        return respuesta(partidaRepository.save(partida));
+    }
+    private void crearEstado(ParticipantePartida participante, PokemonEquipo pokemon) { PokemonBatalla b=new PokemonBatalla(); b.setParticipante(participante); b.setPokemonEquipo(pokemon); b.setVidaActual(pokemon.getHpBase()); b.setActivo(participante.getEquipo().getPokemon().indexOf(pokemon)==0); pokemonBatallaRepository.save(b); }
 
     private ParticipantePartida nuevoParticipante(Partida partida, Jugador jugador, Equipo equipo) {
         ParticipantePartida participante = new ParticipantePartida();

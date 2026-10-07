@@ -184,10 +184,8 @@ jugador (`400`), un jugador repetido o una sala llena (`409`).
 
 ## Guía completa de combate (fase 1 y fase 2)
 
-Esta sección documenta el contrato completo necesario para jugar una partida.
-Las rutas marcadas con **Fase 2** requieren que la implementación de combate de
-`tasks/fase2.md` esté incorporada; en el estado actual del código esas rutas
-aún no están disponibles.
+Esta sección documenta el flujo necesario para jugar una partida. Las rutas de
+equipos, confirmación, inicio y combate están implementadas en la API actual.
 
 ### 1. Formar equipos
 
@@ -232,7 +230,7 @@ Al iniciar, la partida pasa a `EN_CURSO`, `numeroTurno` comienza en `1` y se
 elige el primer turno según la mayor velocidad base de los equipos. El primer
 Pokémon de cada equipo queda activo con su vida máxima.
 
-### 3. Consultar estado y turno — **Fase 2**
+### 3. Consultar estado y turno
 
 | Método | Ruta | Descripción |
 | --- | --- | --- |
@@ -248,7 +246,7 @@ curl "$BASE_URL/api/partidas/UUID-PARTIDA/turno"
 Solo el UUID incluido en `jugadorId` puede actuar. Una acción fuera de turno
 recibe `409 Conflict`.
 
-### 4. Jugar un turno — **Fase 2**
+### 4. Jugar un turno
 
 El jugador con el turno puede atacar con el Pokémon activo o cambiarlo por un
 Pokémon no debilitado. Ambos consumen el turno.
@@ -287,7 +285,7 @@ curl -X POST "$BASE_URL/api/partidas/UUID-PARTIDA/acciones/rendirse" \
   -d '{"jugadorId":"UUID-JUGADOR"}'
 ```
 
-### 5. Finalizar y consultar historial — **Fase 2**
+### 5. Finalizar una partida
 
 La partida termina cuando un participante no tiene Pokémon disponibles o se
 rinde. Su estado pasa a `FINALIZADA`, `turnoDe` queda en `null` y se registra
@@ -295,19 +293,14 @@ el ganador y la fecha de finalización.
 
 | Método | Ruta | Descripción |
 | --- | --- | --- |
-| `GET` | `/api/partidas/{partidaId}/turnos` | Lista ataques, cambios y rendiciones por número de turno. |
-| `GET` | `/api/partidas/{partidaId}/movimientos` | Lista ataques, daño, vida restante y resultado. |
-| `GET` | `/api/partidas/{partidaId}/resultado` | Devuelve estado final, ganador y fecha de cierre. |
+La consulta final se realiza con `GET /api/partidas/{partidaId}`; la respuesta
+incluye `estado`, `turnoDe` y los participantes. La persistencia y consulta de
+historial detallado (`/turnos`, `/movimientos` y `/resultado`) sigue pendiente
+de implementación y por ello no se documenta como ruta disponible.
 
-```bash
-curl "$BASE_URL/api/partidas/UUID-PARTIDA/turnos"
-curl "$BASE_URL/api/partidas/UUID-PARTIDA/movimientos"
-curl "$BASE_URL/api/partidas/UUID-PARTIDA/resultado"
-```
-
-La API debe rechazar cambios hacia un Pokémon debilitado, movimientos de otro
-Pokémon, acciones tras finalizar y actualizaciones simultáneas. Estos casos se
-responden como `400` o `409`, según corresponda.
+La API rechaza cambios hacia un Pokémon debilitado, movimientos de otro
+Pokémon y acciones fuera de turno o después de finalizar con `400` o `409`,
+según corresponda.
 
 ## Estructura
 

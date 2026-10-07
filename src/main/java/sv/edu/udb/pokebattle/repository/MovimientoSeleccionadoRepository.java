@@ -1,0 +1,1 @@
+package sv.edu.udb.pokebattle.repository; import java.util.UUID; import org.springframework.data.jpa.repository.JpaRepository; import sv.edu.udb.pokebattle.model.MovimientoSeleccionado; public interface MovimientoSeleccionadoRepository extends JpaRepository<MovimientoSeleccionado, UUID> { }

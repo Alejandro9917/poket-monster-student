@@ -1,0 +1,1 @@
+package sv.edu.udb.pokebattle.dto; import java.util.UUID; import sv.edu.udb.pokebattle.model.*; public record AccionCombateResponse(Integer numeroTurno,TipoAccion tipoAccion,UUID jugadorId,String mensaje,Integer dano,Integer vidaRestante,boolean pokemonDebilitado,EstadoPartida estadoPartida,UUID siguienteTurnoDe,UUID ganadorId) { }
