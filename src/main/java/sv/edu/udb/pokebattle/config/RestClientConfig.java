@@ -7,5 +7,9 @@ import org.springframework.web.client.RestClient;
 
 @Configuration
 public class RestClientConfig {
-    @Bean RestClient pokeApiRestClient(RestClient.Builder builder, @Value("${pokeapi.base-url}") String baseUrl) { return builder.baseUrl(baseUrl).build(); }
+  @Bean
+  RestClient pokeApiRestClient(
+      RestClient.Builder builder, @Value("${pokeapi.base-url}") String baseUrl) {
+    return builder.baseUrl(baseUrl).build();
+  }
 }

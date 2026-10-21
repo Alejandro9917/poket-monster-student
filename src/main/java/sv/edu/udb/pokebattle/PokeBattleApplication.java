@@ -5,5 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class PokeBattleApplication {
-    public static void main(String[] args) { SpringApplication.run(PokeBattleApplication.class, args); }
+  public static void main(String[] args) {
+    SpringApplication.run(PokeBattleApplication.class, args);
+  }
 }

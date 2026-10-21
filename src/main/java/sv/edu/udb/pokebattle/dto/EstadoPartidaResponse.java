@@ -1,1 +1,13 @@
-package sv.edu.udb.pokebattle.dto; import java.util.*; import sv.edu.udb.pokebattle.model.EstadoPartida; public record EstadoPartidaResponse(UUID partidaId,String codigoSala,EstadoPartida estado,Integer numeroTurno,UUID turnoDe,UUID ganadorId,List<EstadoParticipanteResponse> participantes) { }
+package sv.edu.udb.pokebattle.dto;
+
+import java.util.*;
+import sv.edu.udb.pokebattle.model.EstadoPartida;
+
+public record EstadoPartidaResponse(
+    UUID partidaId,
+    String codigoSala,
+    EstadoPartida estado,
+    Integer numeroTurno,
+    UUID turnoDe,
+    UUID ganadorId,
+    List<EstadoParticipanteResponse> participantes) {}

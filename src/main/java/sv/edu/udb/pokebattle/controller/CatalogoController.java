@@ -1,3 +1,41 @@
 package sv.edu.udb.pokebattle.controller;
-import jakarta.validation.constraints.*; import lombok.*; import org.springframework.validation.annotation.Validated; import org.springframework.web.bind.annotation.*; import sv.edu.udb.pokebattle.dto.*; import sv.edu.udb.pokebattle.service.CatalogoService; import java.util.*;
-@RestController @RequestMapping("/api/catalogo") @RequiredArgsConstructor @Validated public class CatalogoController { private final CatalogoService service; @GetMapping("/pokemon") public PaginaResponse<PokemonResumen> listar(@RequestParam(defaultValue="0") @PositiveOrZero int page){return service.listar(page);}@GetMapping("/pokemon/buscar") public List<PokemonResumen> buscar(@RequestParam String nombre){return service.buscar(nombre);}@GetMapping("/pokemon/{idONombre}/movimientos") public PaginaResponse<MovimientoResumen> movimientos(@PathVariable String idONombre,@RequestParam(defaultValue="0") @PositiveOrZero int page,@RequestParam(defaultValue="20") @Min(1) @Max(50) int size){return service.movimientos(idONombre,page,size);}@GetMapping("/pokemon/{idONombre}") public PokemonDetalleResponse detalle(@PathVariable String idONombre){return service.detalle(idONombre);} }
+
+import jakarta.validation.constraints.*;
+import java.util.*;
+import lombok.*;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import sv.edu.udb.pokebattle.dto.*;
+import sv.edu.udb.pokebattle.service.CatalogoService;
+
+@RestController
+@RequestMapping("/api/catalogo")
+@RequiredArgsConstructor
+@Validated
+public class CatalogoController {
+  private final CatalogoService service;
+
+  @GetMapping("/pokemon")
+  public PaginaResponse<PokemonResumen> listar(
+      @RequestParam(defaultValue = "0") @PositiveOrZero int page) {
+    return service.listar(page);
+  }
+
+  @GetMapping("/pokemon/buscar")
+  public List<PokemonResumen> buscar(@RequestParam String nombre) {
+    return service.buscar(nombre);
+  }
+
+  @GetMapping("/pokemon/{idONombre}/movimientos")
+  public PaginaResponse<MovimientoResumen> movimientos(
+      @PathVariable String idONombre,
+      @RequestParam(defaultValue = "0") @PositiveOrZero int page,
+      @RequestParam(defaultValue = "20") @Min(1) @Max(50) int size) {
+    return service.movimientos(idONombre, page, size);
+  }
+
+  @GetMapping("/pokemon/{idONombre}")
+  public PokemonDetalleResponse detalle(@PathVariable String idONombre) {
+    return service.detalle(idONombre);
+  }
+}

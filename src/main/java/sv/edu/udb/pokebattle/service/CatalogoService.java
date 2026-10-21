@@ -1,3 +1,71 @@
 package sv.edu.udb.pokebattle.service;
-import lombok.*; import org.springframework.stereotype.Service; import sv.edu.udb.pokebattle.client.PokeApiClient; import sv.edu.udb.pokebattle.dto.*; import java.util.*; import java.util.stream.*;
-@Service @RequiredArgsConstructor public class CatalogoService { private static final int TAMANO=50; private final PokeApiClient client; private int id(String u){String[] p=u.replaceAll("/$","").split("/");return Integer.parseInt(p[p.length-1]);} public PaginaResponse<PokemonResumen> listar(int page){var r=client.listar(page*TAMANO,TAMANO);return new PaginaResponse<>(r.results().stream().map(x->new PokemonResumen(id(x.url()),x.name())).toList(),page,TAMANO,r.count(),(int)Math.ceil(r.count()/(double)TAMANO));} public List<PokemonResumen> buscar(String n){String f=n.trim().toLowerCase();int total=client.listar(0,1).count();return client.listar(0,total).results().stream().filter(x->x.name().contains(f)).limit(20).map(x->new PokemonResumen(id(x.url()),x.name())).toList();} public PokemonDetalleResponse detalle(String v){var p=client.pokemon(v);return new PokemonDetalleResponse(p.id(),p.name(),p.sprites().frontDefault(),p.stats().stream().collect(Collectors.toMap(s->s.stat().name(),PokeApiClient.Estadistica::baseStat)),p.types().stream().map(x->x.type().name()).toList());} public PaginaResponse<MovimientoResumen> movimientos(String pokemon,int page,int size){var lista=client.pokemon(pokemon).moves();int inicio=Math.min(page*size,lista.size());int fin=Math.min(inicio+size,lista.size());var contenido=lista.subList(inicio,fin).stream().map(x->client.movimiento(id(x.move().url()))).map(m->new MovimientoResumen(m.id(),m.name(),m.power(),m.accuracy(),m.type()==null?null:m.type().name())).toList();return new PaginaResponse<>(contenido,page,size,lista.size(),(int)Math.ceil(lista.size()/(double)size));} }
+
+import java.util.*;
+import java.util.stream.*;
+import lombok.*;
+import org.springframework.stereotype.Service;
+import sv.edu.udb.pokebattle.client.PokeApiClient;
+import sv.edu.udb.pokebattle.dto.*;
+
+@Service
+@RequiredArgsConstructor
+public class CatalogoService {
+  private static final int TAMANO = 50;
+  private final PokeApiClient client;
+
+  private int id(String u) {
+    String[] p = u.replaceAll("/$", "").split("/");
+    return Integer.parseInt(p[p.length - 1]);
+  }
+
+  public PaginaResponse<PokemonResumen> listar(int page) {
+    var r = client.listar(page * TAMANO, TAMANO);
+    return new PaginaResponse<>(
+        r.results().stream().map(x -> new PokemonResumen(id(x.url()), x.name())).toList(),
+        page,
+        TAMANO,
+        r.count(),
+        (int) Math.ceil(r.count() / (double) TAMANO));
+  }
+
+  public List<PokemonResumen> buscar(String n) {
+    String f = n.trim().toLowerCase();
+    int total = client.listar(0, 1).count();
+    return client.listar(0, total).results().stream()
+        .filter(x -> x.name().contains(f))
+        .limit(20)
+        .map(x -> new PokemonResumen(id(x.url()), x.name()))
+        .toList();
+  }
+
+  public PokemonDetalleResponse detalle(String v) {
+    var p = client.pokemon(v);
+    return new PokemonDetalleResponse(
+        p.id(),
+        p.name(),
+        p.sprites().frontDefault(),
+        p.stats().stream()
+            .collect(Collectors.toMap(s -> s.stat().name(), PokeApiClient.Estadistica::baseStat)),
+        p.types().stream().map(x -> x.type().name()).toList());
+  }
+
+  public PaginaResponse<MovimientoResumen> movimientos(String pokemon, int page, int size) {
+    var lista = client.pokemon(pokemon).moves();
+    int inicio = Math.min(page * size, lista.size());
+    int fin = Math.min(inicio + size, lista.size());
+    var contenido =
+        lista.subList(inicio, fin).stream()
+            .map(x -> client.movimiento(id(x.move().url())))
+            .map(
+                m ->
+                    new MovimientoResumen(
+                        m.id(),
+                        m.name(),
+                        m.power(),
+                        m.accuracy(),
+                        m.type() == null ? null : m.type().name()))
+            .toList();
+    return new PaginaResponse<>(
+        contenido, page, size, lista.size(), (int) Math.ceil(lista.size() / (double) size));
+  }
+}

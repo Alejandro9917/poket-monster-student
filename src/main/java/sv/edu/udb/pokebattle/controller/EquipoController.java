@@ -12,37 +12,48 @@ import sv.edu.udb.pokebattle.dto.CrearEquipoRequest;
 import sv.edu.udb.pokebattle.dto.EquipoResponse;
 import sv.edu.udb.pokebattle.dto.GuardarPokemonRequest;
 import sv.edu.udb.pokebattle.dto.PokemonEquipoResponse;
-import sv.edu.udb.pokebattle.service.EquipoService;
 import sv.edu.udb.pokebattle.exception.AccesoDenegadoException;
+import sv.edu.udb.pokebattle.service.EquipoService;
 
 @RestController
 @RequiredArgsConstructor
 public class EquipoController {
-    private final EquipoService service;
+  private final EquipoService service;
 
-    @PostMapping("/api/jugadores/{jugadorId}/equipos")
-    @ResponseStatus(HttpStatus.CREATED)
-    public EquipoResponse crear(@PathVariable UUID jugadorId,
-                                @Valid @RequestBody CrearEquipoRequest dto,
-                                @AuthenticationPrincipal Jwt jwt) {
-        if (!UUID.fromString(jwt.getSubject()).equals(jugadorId)) {
-            throw new AccesoDenegadoException("No puedes crear equipos para otro jugador");
-        }
-        return service.crear(jugadorId, dto);
+  @PostMapping("/api/jugadores/{jugadorId}/equipos")
+  @ResponseStatus(HttpStatus.CREATED)
+  public EquipoResponse crear(
+      @PathVariable UUID jugadorId,
+      @Valid @RequestBody CrearEquipoRequest dto,
+      @AuthenticationPrincipal Jwt jwt) {
+    if (!UUID.fromString(jwt.getSubject()).equals(jugadorId)) {
+      throw new AccesoDenegadoException("No puedes crear equipos para otro jugador");
     }
+    return service.crear(jugadorId, dto);
+  }
 
-    @GetMapping("/api/jugadores/{jugadorId}/equipos")
-    public List<EquipoResponse> listar(@PathVariable UUID jugadorId) {
-        return service.listar(jugadorId);
-    }
+  @GetMapping("/api/jugadores/{jugadorId}/equipos")
+  public List<EquipoResponse> listar(@PathVariable UUID jugadorId) {
+    return service.listar(jugadorId);
+  }
 
-    @GetMapping("/api/equipos/{equipoId}")
-    public EquipoResponse obtener(@PathVariable UUID equipoId) { return service.obtener(equipoId); }
+  @GetMapping("/api/equipos/{equipoId}")
+  public EquipoResponse obtener(@PathVariable UUID equipoId) {
+    return service.obtener(equipoId);
+  }
 
-    @PostMapping("/api/equipos/{equipoId}/pokemon")
-    @ResponseStatus(HttpStatus.CREATED)
-    public PokemonEquipoResponse agregar(@PathVariable UUID equipoId, @Valid @RequestBody GuardarPokemonRequest dto) { return service.agregar(equipoId, dto); }
+  @PostMapping("/api/equipos/{equipoId}/pokemon")
+  @ResponseStatus(HttpStatus.CREATED)
+  public PokemonEquipoResponse agregar(
+      @PathVariable UUID equipoId, @Valid @RequestBody GuardarPokemonRequest dto) {
+    return service.agregar(equipoId, dto);
+  }
 
-    @PutMapping("/api/equipos/{equipoId}/pokemon/{pokemonId}")
-    public PokemonEquipoResponse cambiar(@PathVariable UUID equipoId, @PathVariable UUID pokemonId, @Valid @RequestBody GuardarPokemonRequest dto) { return service.cambiar(equipoId, pokemonId, dto); }
+  @PutMapping("/api/equipos/{equipoId}/pokemon/{pokemonId}")
+  public PokemonEquipoResponse cambiar(
+      @PathVariable UUID equipoId,
+      @PathVariable UUID pokemonId,
+      @Valid @RequestBody GuardarPokemonRequest dto) {
+    return service.cambiar(equipoId, pokemonId, dto);
+  }
 }

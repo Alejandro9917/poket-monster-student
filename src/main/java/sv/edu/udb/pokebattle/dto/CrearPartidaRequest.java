@@ -3,4 +3,4 @@ package sv.edu.udb.pokebattle.dto;
 import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 
-public record CrearPartidaRequest(@NotNull UUID jugadorId, @NotNull UUID equipoId) { }
+public record CrearPartidaRequest(@NotNull UUID jugadorId, @NotNull UUID equipoId) {}

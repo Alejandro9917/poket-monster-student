@@ -14,27 +14,37 @@ import sv.edu.udb.pokebattle.service.PartidaService;
 @RequestMapping("/api/partidas")
 @RequiredArgsConstructor
 public class PartidaController {
-    private final PartidaService service;
+  private final PartidaService service;
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public PartidaResponse crear(@Valid @RequestBody CrearPartidaRequest dto) { return service.crear(dto); }
+  @PostMapping
+  @ResponseStatus(HttpStatus.CREATED)
+  public PartidaResponse crear(@Valid @RequestBody CrearPartidaRequest dto) {
+    return service.crear(dto);
+  }
 
-    @PostMapping("/{partidaId}/unirse")
-    public PartidaResponse unirse(@PathVariable UUID partidaId,
-                                  @Valid @RequestBody UnirsePartidaRequest dto) {
-        return service.unirse(partidaId, dto);
-    }
-    @PostMapping("/{partidaId}/jugadores/{jugadorId}/confirmar")
-    public PartidaResponse confirmar(@PathVariable UUID partidaId, @PathVariable UUID jugadorId) { return service.confirmar(partidaId,jugadorId); }
-    @PostMapping("/{partidaId}/iniciar")
-    public PartidaResponse iniciar(@PathVariable UUID partidaId) { return service.iniciar(partidaId); }
+  @PostMapping("/{partidaId}/unirse")
+  public PartidaResponse unirse(
+      @PathVariable UUID partidaId, @Valid @RequestBody UnirsePartidaRequest dto) {
+    return service.unirse(partidaId, dto);
+  }
 
-    @GetMapping("/{partidaId}")
-    public PartidaResponse obtener(@PathVariable UUID partidaId) { return service.obtener(partidaId); }
+  @PostMapping("/{partidaId}/jugadores/{jugadorId}/confirmar")
+  public PartidaResponse confirmar(@PathVariable UUID partidaId, @PathVariable UUID jugadorId) {
+    return service.confirmar(partidaId, jugadorId);
+  }
 
-    @GetMapping("/codigo/{codigo}")
-    public PartidaResponse buscarPorCodigo(@PathVariable String codigo) {
-        return service.buscarPorCodigo(codigo);
-    }
+  @PostMapping("/{partidaId}/iniciar")
+  public PartidaResponse iniciar(@PathVariable UUID partidaId) {
+    return service.iniciar(partidaId);
+  }
+
+  @GetMapping("/{partidaId}")
+  public PartidaResponse obtener(@PathVariable UUID partidaId) {
+    return service.obtener(partidaId);
+  }
+
+  @GetMapping("/codigo/{codigo}")
+  public PartidaResponse buscarPorCodigo(@PathVariable String codigo) {
+    return service.buscarPorCodigo(codigo);
+  }
 }

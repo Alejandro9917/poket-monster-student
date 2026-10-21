@@ -1,3 +1,33 @@
 package sv.edu.udb.pokebattle.service;
-import java.util.*; import lombok.RequiredArgsConstructor; import org.springframework.stereotype.Service; import org.springframework.transaction.annotation.Transactional; import sv.edu.udb.pokebattle.dto.JugadorResponse; import sv.edu.udb.pokebattle.exception.RecursoNoEncontradoException; import sv.edu.udb.pokebattle.model.Jugador; import sv.edu.udb.pokebattle.repository.JugadorRepository;
-@Service @RequiredArgsConstructor @Transactional public class JugadorService { private final JugadorRepository repository; @Transactional(readOnly=true) public List<JugadorResponse> listar(){return repository.findAll().stream().map(JugadorResponse::desde).toList();} @Transactional(readOnly=true) public JugadorResponse obtener(UUID id){return JugadorResponse.desde(buscarEntidad(id));} public Jugador buscarEntidad(UUID id){return repository.findById(id).orElseThrow(()->new RecursoNoEncontradoException("Jugador no encontrado"));} }
+
+import java.util.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import sv.edu.udb.pokebattle.dto.JugadorResponse;
+import sv.edu.udb.pokebattle.exception.RecursoNoEncontradoException;
+import sv.edu.udb.pokebattle.model.Jugador;
+import sv.edu.udb.pokebattle.repository.JugadorRepository;
+
+@Service
+@RequiredArgsConstructor
+@Transactional
+public class JugadorService {
+  private final JugadorRepository repository;
+
+  @Transactional(readOnly = true)
+  public List<JugadorResponse> listar() {
+    return repository.findAll().stream().map(JugadorResponse::desde).toList();
+  }
+
+  @Transactional(readOnly = true)
+  public JugadorResponse obtener(UUID id) {
+    return JugadorResponse.desde(buscarEntidad(id));
+  }
+
+  public Jugador buscarEntidad(UUID id) {
+    return repository
+        .findById(id)
+        .orElseThrow(() -> new RecursoNoEncontradoException("Jugador no encontrado"));
+  }
+}
