@@ -68,7 +68,12 @@ public class EquipoService {
         if (solicitados.size() != dto.movimientosApiId().size()) throw new ReglaNegocioException("No se permiten movimientos repetidos");
         var externo = pokeApi.pokemon(dto.pokemonApiId().toString());
         Set<Integer> permitidos = externo.moves().stream().map(x -> id(x.move().url())).collect(java.util.stream.Collectors.toSet());
-        if (!permitidos.containsAll(solicitados)) throw new ReglaNegocioException("Uno o más movimientos no están disponibles para el Pokémon");
+        Set<Integer> noDisponibles = new HashSet<>(solicitados);
+        noDisponibles.removeAll(permitidos);
+        if (!noDisponibles.isEmpty()) {
+            throw new ReglaNegocioException(
+                    "Movimientos no disponibles para este Pokémon: " + noDisponibles);
+        }
         Map<String,Integer> stats = externo.stats().stream().collect(java.util.stream.Collectors.toMap(x -> x.stat().name(), PokeApiClient.Estadistica::baseStat));
         PokemonEquipo p = new PokemonEquipo(); p.setEquipo(equipo); p.setPokemonApiId(externo.id()); p.setNombre(externo.name()); p.setSprite(externo.sprites().frontDefault()); p.setHpBase(stats.get("hp")); p.setAtaqueBase(stats.get("attack")); p.setDefensaBase(stats.get("defense")); p.setVelocidadBase(stats.get("speed"));
         solicitados.forEach(movId -> { var ext = pokeApi.movimiento(movId); MovimientoSeleccionado m = new MovimientoSeleccionado(); m.setPokemon(p); m.setMovimientoApiId(ext.id()); m.setNombre(ext.name()); m.setPoder(ext.power()); m.setPrecisionMovimiento(ext.accuracy()); m.setTipo(ext.type().name()); p.getMovimientos().add(m); });

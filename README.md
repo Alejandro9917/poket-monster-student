@@ -25,6 +25,22 @@ La API queda disponible en `http://localhost:8080`. Para ver los logs:
 docker compose -f docker/compose.yml logs -f
 ```
 
+El cliente Next.js queda disponible en `http://localhost:3000`. La interfaz
+permite operar jugadores, equipos, catálogo, partidas y combate desde el
+navegador.
+
+### Ejecutar solo el frontend
+
+```bash
+cd frontend
+cp .env.example .env.local
+npm install
+npm run dev
+```
+
+Abre `http://localhost:3000`. El backend debe seguir disponible en el puerto
+`8080`; la variable `NEXT_PUBLIC_API_URL` permite cambiar esa dirección.
+
 Para detenerla:
 
 ```bash
@@ -81,6 +97,7 @@ repetirse sin distinguir mayúsculas de minúsculas. Un nombre duplicado devuelv
 | `GET` | `/api/catalogo/pokemon` | `page` opcional, desde `0` | Lista 50 Pokémon por página. |
 | `GET` | `/api/catalogo/pokemon/buscar` | `nombre` obligatorio | Busca hasta 20 Pokémon por nombre. |
 | `GET` | `/api/catalogo/pokemon/{idONombre}` | ID o nombre | Obtiene detalle, estadísticas y tipos. |
+| `GET` | `/api/catalogo/pokemon/{idONombre}/movimientos` | `page` y `size` opcionales | Lista los movimientos disponibles para ese Pokémon. |
 
 Ejemplos:
 
@@ -88,6 +105,7 @@ Ejemplos:
 curl 'http://localhost:8080/api/catalogo/pokemon?page=0'
 curl 'http://localhost:8080/api/catalogo/pokemon/buscar?nombre=pika'
 curl http://localhost:8080/api/catalogo/pokemon/pikachu
+curl 'http://localhost:8080/api/catalogo/pokemon/pikachu/movimientos?page=0&size=20'
 ```
 
 La respuesta paginada contiene `contenido`, `pagina`, `tamano`,
@@ -209,6 +227,20 @@ curl -X POST "$BASE_URL/api/equipos/UUID-EQUIPO/pokemon" \
 `pokemonApiId` y los valores de `movimientosApiId` son identificadores
 numéricos de PokéAPI. Para atacar después se usa el UUID devuelto para cada
 movimiento guardado en el equipo, no el ID numérico de PokéAPI.
+
+El movimiento debe aparecer en la lista de movimientos del Pokémon en PokéAPI.
+Por ejemplo, Pikachu (`pokemonApiId: 25`) acepta los movimientos `85`
+(`thunderbolt`) y `98` (`quick-attack`):
+
+```json
+{
+  "pokemonApiId": 25,
+  "movimientosApiId": [85, 98]
+}
+```
+
+Si se envía un movimiento incompatible, la respuesta `400` identifica los IDs
+que no están disponibles para el Pokémon seleccionado.
 
 ### 2. Confirmar e iniciar la partida
 

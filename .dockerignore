@@ -3,5 +3,6 @@
 .vscode
 target
 docker
+frontend
 *.iml
 .DS_Store

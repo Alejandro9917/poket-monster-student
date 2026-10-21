@@ -9,5 +9,7 @@ import java.util.UUID;
 public class Jugador {
     @Id @GeneratedValue(strategy = GenerationType.UUID) private UUID id;
     @Column(nullable = false, unique = true, length = 40) private String nombre;
+    @Column(nullable = false, unique = true, length = 40) private String usuario;
+    @Column(nullable = false, length = 60) private String passwordHash;
     @Column(nullable = false) private LocalDateTime creadoEn = LocalDateTime.now();
 }

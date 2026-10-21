@@ -10,3 +10,16 @@ services:
     environment:
       SERVER_PORT: "8080"
     restart: unless-stopped
+  pokebattle-web:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:8080
+    image: pokebattle-web:latest
+    container_name: pokebattle-web
+    ports:
+      - "3000:3000"
+    depends_on:
+      - pokebattle-api
+    restart: unless-stopped

@@ -32,4 +32,9 @@ public class PartidaController {
 
     @GetMapping("/{partidaId}")
     public PartidaResponse obtener(@PathVariable UUID partidaId) { return service.obtener(partidaId); }
+
+    @GetMapping("/codigo/{codigo}")
+    public PartidaResponse buscarPorCodigo(@PathVariable String codigo) {
+        return service.buscarPorCodigo(codigo);
+    }
 }

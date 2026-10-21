@@ -68,6 +68,13 @@ public class PartidaService {
     @Transactional(readOnly = true)
     public PartidaResponse obtener(UUID partidaId) { return respuesta(buscarPartida(partidaId)); }
 
+    @Transactional(readOnly = true)
+    public PartidaResponse buscarPorCodigo(String codigo) {
+        Partida partida = partidaRepository.findByCodigoSalaIgnoreCase(codigo)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Partida no encontrada"));
+        return respuesta(partida);
+    }
+
     public PartidaResponse confirmar(UUID partidaId, UUID jugadorId) {
         Partida partida=buscarPartida(partidaId);
         if(partida.getEstado()!=EstadoPartida.ESPERANDO_CONFIRMACION) throw new ConflictoException("La partida no se encuentra esperando confirmaciones");

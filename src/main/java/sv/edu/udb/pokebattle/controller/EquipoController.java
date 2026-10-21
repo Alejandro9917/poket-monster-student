@@ -5,12 +5,15 @@ import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import sv.edu.udb.pokebattle.dto.CrearEquipoRequest;
 import sv.edu.udb.pokebattle.dto.EquipoResponse;
 import sv.edu.udb.pokebattle.dto.GuardarPokemonRequest;
 import sv.edu.udb.pokebattle.dto.PokemonEquipoResponse;
 import sv.edu.udb.pokebattle.service.EquipoService;
+import sv.edu.udb.pokebattle.exception.AccesoDenegadoException;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,7 +23,11 @@ public class EquipoController {
     @PostMapping("/api/jugadores/{jugadorId}/equipos")
     @ResponseStatus(HttpStatus.CREATED)
     public EquipoResponse crear(@PathVariable UUID jugadorId,
-                                @Valid @RequestBody CrearEquipoRequest dto) {
+                                @Valid @RequestBody CrearEquipoRequest dto,
+                                @AuthenticationPrincipal Jwt jwt) {
+        if (!UUID.fromString(jwt.getSubject()).equals(jugadorId)) {
+            throw new AccesoDenegadoException("No puedes crear equipos para otro jugador");
+        }
         return service.crear(jugadorId, dto);
     }
 
